@@ -93,6 +93,12 @@ void setup() {
   Serial.begin(115200);          // Initialize debug Serial
   wifiSerial.begin(9600);        // Initialize WiFi ESP8266 Serial
   WiFi.init(&wifiSerial);        // Initialize WiFiEsp library
+
+  if (WiFi.status() == WL_NO_SHIELD) {
+    Serial.println("[WiFiEsp] Cannot initialize ESP module");
+    while (true); // Halt execution if the ESP8266 is not detected
+  }
+
   dht.begin();                   // Initialize DHT22 sensor
   pmsSerial.begin(115200);       // Initialize PMS5003
   Wire.begin();                  // Initialize I2C bus
@@ -101,18 +107,6 @@ void setup() {
   initializeSensor(sensor1, "Sensor 1");
   initializeSensor(sensor2, "Sensor 2");
   initializeSensor(sensor3, "Sensor 3");
-
-  // Initialize MQ131 Ozone Sensor
-  MQ131.begin(6, MQ131_PIN, LOW_CONCENTRATION, 1000000);
-  MQ131.setTimeToRead(20);  // Set how many seconds we will read from the Ozone sensor
-  MQ131.setR0(9000);        // Calibrated R0 value
-
-  // Initialize DIP switch pins as inputs
-  pinMode(DIP_SWITCH_3_PIN, INPUT);
-  pinMode(DIP_SWITCH_4_PIN, INPUT);
-  pinMode(DIP_SWITCH_5_PIN, INPUT);
-  pinMode(DIP_SWITCH_6_PIN, INPUT);
-  pinMode(DIP_SWITCH_7_PIN, INPUT);
 
   // Load configuration
   loadConfiguration();
